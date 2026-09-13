@@ -5,8 +5,8 @@ grid = [
     ['S', '.', '.', '#', '#', '.'],
     ['#', '.', '#', '#', '.', '.'],
     ['#', '.', '.', '.', '#', '.'],
-    ['#', '#', '.', '.', '.', '.'],
-    ['.', '.', 'E', '#', '.', '.']
+    ['#', '.', '.', '.', '.', '.'],
+    ['.', '.', 'E', '.', '.', '.']
 ]
 
 def print_maze(maze):
@@ -15,6 +15,30 @@ def print_maze(maze):
     for row in maze:
         print(" ".join(row))
     print("----------------\n")
+
+
+def draw_path_on_maze(maze, path, title="ÇÖZÜM"):
+    """
+    Bulunan yolu labirent üzerinde '*' sembolü ile gösterir.
+    'S' (Start) ve 'E' (End) harflerini bozmaz.
+    """
+    if not path:
+        print(f"\n--- {title}: YOL BULUNAMADI ---")
+        return
+
+    # Orijinal labirentin kopyasını oluştur (orijinali bozmamak için)
+    maze_copy = [row[:] for row in maze]
+
+    # Yol üzerindeki koordinatları '*' yap (S ve E hariç)
+    for r, c in path:
+        if maze_copy[r][c] not in ('S', 'E'):
+            maze_copy[r][c] = '*'
+
+    print(f"\n--- {title} ---")
+    for row in maze_copy:
+        print(" ".join(row))
+    print("-" * (len(title) + 8))
+
 
 def find_start(maze):
     """Labirentteki 'S' (Start) noktasının koordinatlarını bulur."""
@@ -98,5 +122,6 @@ if __name__ == "__main__":
     bfs_path = bfs_solve(grid)
     dfs_path = dfs_solve(grid)
     
-    print(f"🔹 BFS Yol Adımı: {len(bfs_path) - 1 if bfs_path else 'Yol Yok'}")
-    print(f"🔸 DFS Yol Adımı: {len(dfs_path) - 1 if dfs_path else 'Yol Yok'}")
+    # Yeni görselleştirme fonksiyonumuzu çağırıyoruz:
+    draw_path_on_maze(grid, bfs_path, "BFS İLE ÇÖZÜM")
+    draw_path_on_maze(grid, dfs_path, "DFS İLE ÇÖZÜM")
