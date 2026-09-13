@@ -2,11 +2,11 @@ from collections import deque
 
 # 2D Labirent Tanımlaması
 grid = [
-    ['S', '.', '.', '#', '.', '.'],
+    ['S', '.', '.', '#', '#', '.'],
     ['#', '.', '#', '#', '.', '.'],
-    ['.', '.', '.', '.', '#', '.'],
-    ['.', '#', '#', '.', '.', '.'],
-    ['.', '.', '.', '#', '.', 'E']
+    ['#', '.', '.', '.', '#', '.'],
+    ['#', '#', '.', '.', '.', '.'],
+    ['.', '.', 'E', '#', '.', '.']
 ]
 
 def print_maze(maze):
@@ -59,14 +59,44 @@ def bfs_solve(maze):
 
     return None  # Yol bulunamadıysa
 
+def dfs_solve(maze):
+    rows, cols = len(maze), len(maze[0])
+    start = find_start(maze)
+    
+    if not start:
+        print("Başlangıç noktası bulunamadı!")
+        return None
+
+    # Stack yapısı: Son giren ilk çıkar (LIFO)
+    stack = [(start[0], start[1], [start])]
+    visited = {start}
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    while stack:
+        # BFS'ten tek farkı burası: popleft() yerine pop() ile EN SON ekleneni çekiyoruz
+        r, c, path = stack.pop()
+
+        # Hedefe ulaştık mı?
+        if maze[r][c] == 'E':
+            return path
+
+        # 4 yönü kontrol et
+        for dr, dc in directions:
+            nr, nc = r + dr, c + dc
+
+            if 0 <= nr < rows and 0 <= nc < cols:
+                if maze[nr][nc] != '#' and (nr, nc) not in visited:
+                    visited.add((nr, nc))
+                    stack.append((nr, nc, path + [(nr, nc)]))
+
+    return None
+
+
 if __name__ == "__main__":
     print_maze(grid)
     
-    path = bfs_solve(grid)
+    bfs_path = bfs_solve(grid)
+    dfs_path = dfs_solve(grid)
     
-    if path:
-        print(f"✅ Yol Bulundu! Adım sayısı: {len(path) - 1}")
-        print("İzlenen Koordinatlar:", path)
-    else:
-        print("❌ Yol bulunamadı!")
-        
+    print(f"🔹 BFS Yol Adımı: {len(bfs_path) - 1 if bfs_path else 'Yol Yok'}")
+    print(f"🔸 DFS Yol Adımı: {len(dfs_path) - 1 if dfs_path else 'Yol Yok'}")
